@@ -27,6 +27,7 @@ function renderRegion(){
  const r=D.regions.find(r=>r.id===region);$('region-title').textContent=r.title;$('region-desc').textContent=r.desc;$('region-eyebrow').textContent=r.eyebrow;
  const a=D.items.filter(i=>region==='all'||i.region===region);$('region-count').textContent=`${a.filter(i=>i.kind==='stay').length} 住宿 · ${a.filter(i=>i.kind!=='stay').length} 地點`;
  $('region-results').setAttribute('aria-labelledby','region-'+region);
+ $('region-weather').innerHTML=window.TRIP_SNOW?.regionSnippet(region)||'';
 }
 function renderItems(){
  const a=filtered(),size=pageSize(),pages=Math.max(1,Math.ceil(a.length/size));page=Math.min(Math.max(0,page),pages-1);
@@ -54,7 +55,7 @@ function renderMap(zoom=false){
 function selectItem(id,move=true){const i=D.items.find(i=>i.id===id);if(!i)return;selected=id;const a=filtered(),idx=a.findIndex(i=>i.id===id);if(idx>=0)page=Math.floor(idx/pageSize());renderItems();markerById.forEach((m,k)=>m.setIcon(icon(D.items.find(i=>i.id===k))));if(move&&map&&i.coords){map.setView(i.coords,i.approx?12:14);markerById.get(id)?.openPopup();}if(!map)$('map-status').textContent='互動地圖暫未能使用，可開啟此卡片嘅 Google Maps 連結。';}
 function showDetail(id){
  const i=D.items.find(i=>i.id===id);if(!i)return;$('detail-title').textContent=i.name;$('detail-area').textContent=`${D.regions.find(r=>r.id===i.region).title} · ${names[i.kind]}`;
- $('detail-body').innerHTML=`<div class="tagrow"><span class="badge">${names[i.kind]}</span>${i.onsen?'<span class="badge">天然溫泉</span>':''}${i.approx?'<span class="badge orange">約略位置</span>':''}</div>${i.layout?`<p><strong>房型：</strong>${esc(i.layout)}</p>`:''}<p>${esc(i.desc)}</p><p class="note">${esc(i.note)}</p>${i.kind==='stay'?`<div class="dialog-price"><strong>${price(i)}／晚・${i.guests} 人全組目標</strong><div class="small">${esc(i.meal)}</div><div class="small muted">未查指定日期空房或即時房價。四人／六人及餐飲方案要分開報價，另查清潔費與稅項。</div></div>`:''}<p class="small muted">${esc(i.positionNote)}</p><div class="dialog-links">${link(i.url,'官方／房源')}${link(maps(i),'Google Maps')}</div><p class="dialog-source">資料查核：2026.10.12 · ${(i.sources||[]).map(n=>link(D.sources[n][1],D.sources[n][0])).join(' · ')}</p>`;
+ $('detail-body').innerHTML=`<div class="tagrow"><span class="badge">${names[i.kind]}</span>${i.onsen?'<span class="badge">天然溫泉</span>':''}${i.approx?'<span class="badge orange">約略位置</span>':''}</div>${i.layout?`<p><strong>房型：</strong>${esc(i.layout)}</p>`:''}<p>${esc(i.desc)}</p><p class="note">${esc(i.note)}</p>${i.kind==='stay'?`<div class="dialog-price"><strong>${price(i)}／晚・${i.guests} 人全組目標</strong><div class="small">${esc(i.meal)}</div><div class="small muted">未查指定日期空房或即時房價。四人／六人及餐飲方案要分開報價，另查清潔費與稅項。</div></div>`:''}<p class="small muted">${esc(i.positionNote)}</p>${window.TRIP_SNOW?.snippet(i)||''}<div class="dialog-links">${link(i.url,'官方／房源')}${link(maps(i),'Google Maps')}</div><p class="dialog-source">資料查核：2026.10.12 · ${(i.sources||[]).map(n=>link(D.sources[n][1],D.sources[n][0])).join(' · ')}</p>`;
  $('detail').showModal();
 }
 function renderRoute(){
