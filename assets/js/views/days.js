@@ -1,6 +1,6 @@
 // 行程: one day at a time. Phone = date pills + swipe; desktop = day detail beside a map of that day.
-import { D, TRIP_DAYS, WEEKDAY, day, item, base, stayFor, itemsForDay, fitDays, isEvening, mapsRoute } from '../trip.js';
-import { $, esc, signHTML, rowHTML, icon, link, gmapsBtnHTML, naviHTML } from '../ui.js';
+import { D, TRIP_DAYS, WEEKDAY, day, item, base, stayFor, itemsForDay, fitDays, isEvening, mapsRoute, dayPhoto, hotelPhoto } from '../trip.js';
+import { $, esc, signHTML, rowHTML, icon, link, gmapsBtnHTML, naviHTML, heroHTML, photoHTML } from '../ui.js';
 import { tripClock, starredIds } from '../state.js';
 import { createMap } from '../map.js';
 import { go } from '../router.js';
@@ -44,21 +44,24 @@ function renderDay(n) {
   const b = base(d.base);
   const slot = (title, list) => list.length ? `<div class="slot"><h3>${title}</h3>${list.map(a => rowHTML(a, d.base)).join('')}</div>` : '';
   const more = D.activities.filter(a => a.bases.includes(d.base)).length;
+  const sign = signHTML(d, ends ? { link: mapsRoute(ends[0], ends[1], (d.sign.via || []).filter(v => v.coords).map(v => v.coords)), linkLabel: '全日路線' } : {});
+  const p = dayPhoto(n);
   return `
-    ${signHTML(d, ends ? { link: mapsRoute(ends[0], ends[1], (d.sign.via || []).filter(v => v.coords).map(v => v.coords)), linkLabel: '全日路線' } : {})}
-    <div class="panel day-stay">
-      <div style="flex:1;min-width:200px">
-        <div class="small faint">今晚住</div>
-        <strong style="font-size:17px">${h ? esc(h.name) : '返港，冇住宿'}</strong>
-        <div class="who">${esc(d.pax)}</div>
-        ${h ? naviHTML(h.navi) : ''}
-      </div>
-      ${h ? `<div style="display:flex;gap:8px;flex-wrap:wrap">${gmapsBtnHTML(h, { label: '開車去', cls: 'btn small' })}<a class="btn small ghost" href="#/stays">住宿資料</a></div>` : ''}
-    </div>
-    <div class="panel" style="display:grid;gap:10px">
-      <h2 style="font-size:19px">${esc(d.title)}</h2>
+    ${heroHTML(p, sign, { cls: 'day-hero', alt: p?.caption || d.title })}
+    <div class="day-intro">
+      <h2>${esc(d.title)}</h2>
       <p class="day-plan">${esc(d.plan)}</p>
-      <p class="day-drive">${esc(d.drive)}</p>
+      <p class="day-drive">${icon('car')}${esc(d.drive)}</p>
+    </div>
+    <div class="day-stay${h ? '' : ' is-none'}">
+      ${photoHTML(h ? hotelPhoto(h) : null, { w: 360, cls: 'day-stay-ph', alt: h ? h.name : '', glyph: h ? '宿' : '機', cat: 'stay' })}
+      <div class="day-stay-txt">
+        <span class="small faint">今晚住</span>
+        <strong>${h ? esc(h.name) : '返港，冇住宿'}</strong>
+        <span class="who">${esc(d.pax)}</span>
+        ${h ? naviHTML(h.navi) : ''}
+        ${h ? `<div class="day-stay-btns">${gmapsBtnHTML(h, { label: '開車去', cls: 'btn small' })}<a class="btn small ghost" href="#/stays">住宿資料</a></div>` : ''}
+      </div>
     </div>
     ${slot('日間揀', dayList)}
     ${slot('夜晚揀', nightList)}

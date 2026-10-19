@@ -3,7 +3,7 @@
 // and may export hide() and selectItem(id) (desktop explore side panel).
 import { D, item, base } from './trip.js';
 import { parse, go, VIEWS } from './router.js';
-import { $, $$, detailHTML, openSheet, initSheet, toast, copyText, syncStamp } from './ui.js';
+import { $, $$, detailHTML, openSheet, initSheet, initPhotos, toast, copyText, syncStamp } from './ui.js';
 import { toggleStar, onStarsChange, starredIds, pruneStars, toggleTheme } from './state.js';
 import { calculate } from './budget.js';
 import * as today from './views/overview.js';
@@ -67,6 +67,7 @@ function init() {
   if (!D) { document.body.insertAdjacentHTML('afterbegin', '<p class="callout">行程資料載入唔到，請重新整理頁面。</p>'); return; }
   pruneStars(new Set(D.activities.map(a => a.id)));
   initSheet();
+  initPhotos();
   $('.skip-link').addEventListener('click', e => { e.preventDefault(); $('#app').focus(); });
   $('#data-checked').textContent = D.updated;
 

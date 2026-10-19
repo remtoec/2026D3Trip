@@ -155,3 +155,22 @@ export function stayFor(n) {
   const d = day(n);
   return d && d.hotel ? hotel(d.hotel) : null;
 }
+
+// ---------- Photos (assets/photos.js; keys are activity ids and "hotel:<id>") ----------
+const PH = window.TRIP_PHOTOS || {};
+// The picture that opens each day and each base; falls back through stay and picks.
+const DAY_PHOTO = { 13: 'sapporo-white-illumination', 14: 'kenmary', 15: 'bluepond', 16: 'hotel:moving', 17: 'hotel:sisumo', 18: 'annupuri', 19: 'market', 20: 'royce-chocolate-world' };
+const BASE_PHOTO = { sapporo: 'sapporo-white-illumination', biei: 'kenmary', furano: 'ningle', taiki: 'hotel:moving', transfer: 'shikotsuko-short-stop', niseko: 'annupuri' };
+
+export const photo = key => (key && PH[key] && PH[key].src ? PH[key] : null);
+export const itemPhoto = a => (a ? photo(a.id) : null);
+export const hotelPhoto = h => (h ? photo('hotel:' + h.id) : null);
+
+export function dayPhoto(n) {
+  return photo(DAY_PHOTO[n]) || hotelPhoto(stayFor(n)) || itemsForDay(n).map(itemPhoto).find(Boolean) || null;
+}
+
+export function basePhoto(id) {
+  const b = base(id);
+  return photo(BASE_PHOTO[id]) || (b && b.hotel ? hotelPhoto(hotel(b.hotel)) : null) || itemsForBase(id).map(itemPhoto).find(Boolean) || null;
+}

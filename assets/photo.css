@@ -1,0 +1,219 @@
+/* Photo layer: every place is shown by its picture first, words second.
+   .ph = photo frame (img or category tile fallback); .hero = photo band with content on its lower edge;
+   .pcard = picture card for today's picks; thumbnails in rows, cards, stays and the 8-day board.
+   Breakpoints follow app.css: <700 phone, 700–1099 tablet, ≥1100 desktop. */
+:root {
+  --r-photo: 18px;
+  --scrim: linear-gradient(180deg, rgba(8, 16, 28, 0) 38%, rgba(8, 16, 28, 0.42) 66%, rgba(8, 16, 28, 0.82) 100%);
+  --scrim-top: linear-gradient(180deg, rgba(8, 16, 28, 0.5) 0%, rgba(8, 16, 28, 0) 32%);
+}
+
+/* ---------- Frame ---------- */
+.ph { position: relative; display: block; overflow: hidden; background: var(--frost); }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph-glyph { display: none; }
+.ph.is-empty {
+  display: grid; place-items: center;
+  background:
+    radial-gradient(120% 90% at 20% 0%, color-mix(in srgb, #fff 26%, transparent), transparent 60%),
+    linear-gradient(160deg, color-mix(in srgb, var(--c, var(--sign)) 78%, #fff), var(--c, var(--sign)));
+}
+.ph.is-empty .ph-glyph {
+  display: block; color: rgba(255, 255, 255, 0.92); font-weight: 700; line-height: 1;
+  font-size: clamp(18px, 38cqi, 64px);
+}
+.ph.is-empty { container-type: inline-size; }
+[data-cat="stay"] .ph.is-empty, .ph.is-empty[data-cat="stay"] { --c: var(--sign); }
+
+.ph-credit {
+  font-size: 12px; color: var(--ink-3); text-decoration: none; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.ph-credit:hover { color: var(--link); text-decoration: underline; }
+.ph-credit.on-photo {
+  position: absolute; top: 10px; right: 10px; z-index: 2; max-width: 55%;
+  padding: 3px 9px; border-radius: 999px; background: rgba(8, 16, 28, 0.45); color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+}
+.ph-credit.on-photo:hover { color: #fff; background: rgba(8, 16, 28, 0.65); }
+
+/* ---------- Hero band ---------- */
+.hero { position: relative; isolation: isolate; overflow: hidden; border-radius: var(--r-photo); background: #1b2a3e; color: #fff; }
+.hero-ph { position: absolute; inset: 0; z-index: -1; }
+.hero-ph::after { content: ""; position: absolute; inset: 0; background: var(--scrim-top), var(--scrim); }
+.hero-ph.is-empty { background: linear-gradient(165deg, #2f6db8, #15335e 70%); }
+.hero-in { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 14px; height: 100%; padding: 16px; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-ph img { animation: hero-settle 1.6s cubic-bezier(.2, .7, .2, 1) both; }
+}
+@keyframes hero-settle { from { transform: scale(1.07); opacity: 0.4; } to { transform: none; opacity: 1; } }
+/* The road sign stands in the landscape like a real roadside board. */
+.hero .sign { box-shadow: inset 0 0 0 5px var(--sign), inset 0 0 0 7px rgba(255, 255, 255, 0.95), 0 12px 32px rgba(4, 10, 20, 0.45); }
+
+/* 總覽 hero: phone = full-bleed, most of the first screen */
+.ov-hero { margin: -16px calc(var(--gutter) * -1) 0; border-radius: 0 0 var(--r-photo) var(--r-photo); min-height: min(76svh, 640px); }
+.ov-hero .hero-in { min-height: min(76svh, 640px); padding: 18px var(--gutter) 18px; }
+.ov-hero .ov-status { margin-bottom: auto; color: #fff; text-shadow: 0 1px 12px rgba(4, 10, 20, 0.5); }
+.ov-hero .ov-status h1 { font-size: 22px; }
+.ov-hero .ov-status h1 b { font-size: 34px; }
+.ov-hero .ov-status p { color: rgba(255, 255, 255, 0.9); }
+/* Heroes with a road sign: credit sits under the sign, clear of the date. */
+.ov-hero .ph-credit.on-photo, .day-hero .ph-credit.on-photo { top: auto; bottom: 8px; right: 12px; }
+.ov-hero .hero-in, .day-hero .hero-in { padding-bottom: 40px !important; }
+
+/* 行程 hero */
+.day-hero { min-height: 460px; }
+.day-hero .hero-in { min-height: 460px; }
+
+/* 景點 base banner */
+.base-hero { min-height: 190px; margin-bottom: 14px; }
+.base-hero .hero-in { min-height: 190px; gap: 4px; padding: 18px; }
+.base-hero h1 { font-size: 26px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; text-shadow: 0 1px 10px rgba(4, 10, 20, 0.45); }
+.base-hero h1 .num { font-size: 18px; font-weight: 600; opacity: 0.9; }
+.base-hero p { font-size: 14px; max-width: 62ch; color: rgba(255, 255, 255, 0.92); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.base-note { margin: 0; display: block; }
+
+/* ---------- Picture cards (today's picks) ---------- */
+.pcards { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+  margin: 0 calc(var(--gutter) * -1); padding: 2px var(--gutter) 6px; scroll-padding: 0 var(--gutter); scrollbar-width: none; }
+.pcards::-webkit-scrollbar { display: none; }
+.pcards > li { flex: 0 0 72%; scroll-snap-align: start; }
+.pcard { position: relative; isolation: isolate; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; color: #fff; background: #1b2a3e; }
+.pcard > .ph { position: absolute; inset: 0; z-index: -1; }
+.pcard > .ph::after { content: ""; position: absolute; inset: 0; background: var(--scrim); }
+.pcard-hit { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.pcard-hit:focus-visible { outline: 3px solid #fff; outline-offset: -5px; }
+.pcard .stamp-btn { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.pcard-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; display: flex; flex-direction: column; gap: 4px; pointer-events: none; }
+.pcard-meta { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
+.pcard h3 { font-size: 18px; line-height: 1.3; text-shadow: 0 1px 8px rgba(4, 10, 20, 0.5); }
+.pcard p { font-size: 13.5px; line-height: 1.45; color: rgba(255, 255, 255, 0.9); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pcard .flag.ok { background: rgba(255, 255, 255, 0.92); color: #1f5a45; }
+@media (hover: hover) {
+  .pcard > .ph img { transition: transform 0.5s cubic-bezier(.2, .7, .2, 1); }
+  .pcard:hover > .ph img { transform: scale(1.04); }
+}
+.pcard:active { transform: scale(0.985); }
+
+/* Stamp on a photo needs its own paper disc to stay legible. */
+.pcard .stamp-btn, .item-media .stamp-btn { background: color-mix(in srgb, var(--paper) 90%, transparent); box-shadow: 0 2px 10px rgba(4, 10, 20, 0.25); backdrop-filter: blur(4px); }
+.pcard .stamp-btn[aria-pressed="true"], .item-media .stamp-btn[aria-pressed="true"] {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2.5px var(--stamp), inset 0 0 0 4.5px var(--paper), inset 0 0 0 5.5px var(--stamp), 0 2px 10px rgba(4, 10, 20, 0.25);
+}
+
+/* ---------- Explore card: picture on top ---------- */
+.item { padding: 0; gap: 0; overflow: hidden; }
+.item-media { position: relative; aspect-ratio: 16 / 10; }
+.item-media-hit { position: absolute; inset: 0; display: block; width: 100%; }
+.item-media-hit .ph { position: absolute; inset: 0; }
+.item-media .stamp-btn { position: absolute; top: 10px; right: 10px; }
+.item-media .plate { position: absolute; left: 12px; bottom: 12px; box-shadow: inset 0 0 0 1.5px var(--sign), inset 0 0 0 2.5px rgba(255, 255, 255, 0.85), 0 2px 8px rgba(4, 10, 20, 0.35); }
+.item-media .plate.walk { box-shadow: inset 0 0 0 1.5px var(--ok), inset 0 0 0 2.5px rgba(255, 255, 255, 0.85), 0 2px 8px rgba(4, 10, 20, 0.35); }
+.item-body { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px 14px; flex: 1; }
+.item-body .item-meta:empty { display: none; }
+.item-title { font-size: 18px; }
+
+/* ---------- Thumbnails ---------- */
+.row-thumb { width: 56px; height: 56px; border-radius: 10px; flex: none; }
+.row-thumb.is-empty .ph-glyph { font-size: 22px; }
+.row-main { padding: 8px 12px 8px 8px; }
+
+.ov-stay { grid-template-columns: auto minmax(0, 1fr) auto; padding: 10px 12px 10px 10px; }
+.ov-stay-ph { width: 68px; height: 68px; border-radius: 10px; }
+.ov-stay-ph.is-empty .ph-glyph { font-size: 24px; }
+
+.ov-next { grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "ph when time go" "ph route route go"; padding: 10px 12px 10px 10px; }
+.ov-next-ph { grid-area: ph; width: 60px; height: 60px; border-radius: 10px; margin-right: 2px; }
+.ov-next-ph.is-empty .ph-glyph, .ov-day-ph.is-empty .ph-glyph { font-family: var(--font-num); }
+
+.ov-day-ph { aspect-ratio: 16 / 10; border-radius: 8px; margin-bottom: 4px; }
+.ov-day.is-focus .ov-day-ph { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85); }
+
+/* ---------- Detail sheet ---------- */
+.detail-photo { margin: 0; }
+.detail-photo > .ph { aspect-ratio: 16 / 10; border-radius: 14px; }
+.detail-photo figcaption { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 12.5px; color: var(--ink-3); }
+.detail-photo figcaption .ph-credit { margin-left: auto; }
+.fact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.fact { background: var(--frost); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.fact dt { font-size: 12.5px; color: var(--ink-3); margin-bottom: 2px; }
+.fact dd { margin: 0; font-size: 14.5px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.fact.is-drive { grid-column: 1 / -1; }
+.fact.is-drive dd { display: flex; align-items: center; gap: 10px; }
+.fact.is-drive dd small { display: block; font-size: 12.5px; font-weight: 400; color: var(--ink-3); }
+.flags { display: flex; flex-wrap: wrap; gap: 6px; }
+.flags:empty { display: none; }
+.detail-desc { font-size: 15px; color: var(--ink-2); }
+.detail-more { border-top: 1px solid var(--ice); padding-top: 4px; }
+.detail-more > summary { cursor: pointer; font-weight: 600; font-size: 14.5px; color: var(--link); padding: 10px 0; list-style-position: outside; }
+.detail-more[open] { display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- Days view ---------- */
+.day-intro { display: grid; gap: 6px; padding: 2px 2px 0; }
+.day-intro h2 { font-size: 19px; }
+.day-intro .day-drive { display: flex; gap: 8px; align-items: start; }
+.day-intro .day-drive svg { width: 17px; height: 17px; flex: none; margin-top: 3px; color: var(--ink-3); }
+.day-stay {
+  display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; align-items: stretch;
+  background: var(--paper); border: 1px solid var(--ice); border-radius: var(--r-card); padding: 10px; flex-wrap: nowrap;
+}
+.day-stay-ph { border-radius: 10px; min-height: 112px; }
+.day-stay-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 2px 4px 2px 0; }
+.day-stay-txt strong { font-size: 17px; line-height: 1.35; }
+.day-stay-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.day-stay .navi { margin-top: 4px; }
+
+/* ---------- Stays ---------- */
+.hotel-photo { position: relative; margin: -18px -18px 4px; }
+.hotel-photo > .ph { aspect-ratio: 16 / 10; border-radius: var(--r-card) var(--r-card) 0 0; }
+.hotel-photo > .ph::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(8, 16, 28, 0.6)); }
+.hotel-photo figcaption { position: absolute; left: 14px; right: 12px; bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.hotel-photo .dates { color: #fff; font-size: 16px; text-shadow: 0 1px 8px rgba(4, 10, 20, 0.6); }
+.hotel-photo .ph-credit { margin-left: auto; color: rgba(255, 255, 255, 0.88); }
+.hotel-note > summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--warn); }
+.hotel-note p { margin-top: 6px; font-size: 13.5px; background: var(--warn-soft); border-radius: 10px; padding: 10px 12px; }
+.hotel.is-key .hotel-photo > .ph { border-radius: calc(var(--r-card) - 1px) calc(var(--r-card) - 1px) 0 0; }
+
+/* ---------- Tablet ---------- */
+@media (min-width: 700px) {
+  .ov-hero { margin: 0; border-radius: var(--r-photo); min-height: 460px; }
+  .ov-hero .hero-in { min-height: 460px; padding: 24px; }
+  .ov-hero .sign { max-width: 720px; }
+  .ov-hero .ov-status h1 { font-size: 24px; }
+  .ov-hero .ov-status h1 b { font-size: 44px; }
+  .pcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; overflow: visible; }
+  .pcards > li { flex: none; }
+  .pcard { aspect-ratio: 3 / 4; }
+  .day-hero, .day-hero .hero-in { min-height: 400px; }
+  .day-hero .hero-in { padding: 22px; }
+  .base-hero, .base-hero .hero-in { min-height: 230px; }
+  .base-hero .hero-in { padding: 24px; }
+  .base-hero h1 { font-size: 32px; }
+  .day-stay { grid-template-columns: 180px minmax(0, 1fr); }
+  .day-stay-ph { min-height: 130px; }
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 1100px) {
+  .ov-hero, .ov-hero .hero-in { min-height: 520px; }
+  .ov-hero .hero-in { padding: 32px; }
+  .ov-hero .ov-status h1 b { font-size: 52px; }
+  .ov-main .pcards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ov-main .pcard { aspect-ratio: 4 / 3; }
+  .day-hero, .day-hero .hero-in { min-height: 380px; }
+  /* Explore list column is narrow: picture beside the text. */
+  .explore-list .item { flex-direction: row; }
+  .explore-list .item-media { aspect-ratio: auto; flex: 0 0 34%; min-height: 100%; }
+  .explore-list .item-media .stamp-btn { width: 40px; height: 40px; font-size: 11.5px; top: 8px; right: 8px; }
+  .explore-list .item-body { padding: 12px 14px; }
+  .explore-list .item-title { font-size: 16.5px; }
+  .explore-list .item-actions .gmaps { display: none; }
+}
+
+/* Half-width "聽日" card: stack date, route and time beside the picture. */
+.ov-next-when { white-space: nowrap; }
+@media (min-width: 700px) {
+  .ov-next { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ph when go" "ph route go" "ph time go"; }
+  .ov-next-time { justify-self: start; }
+}

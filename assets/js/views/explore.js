@@ -1,6 +1,6 @@
 // 景點: base tabs + category chips. Phone = swipe carousel or full map; desktop = list | map | detail.
-import { D, CATS, CAT_ORDER, base, item, category, drive, itemsForBase, day } from '../trip.js';
-import { $, $$, esc, itemCardHTML, detailHTML, pagerHTML, openSheet, closeSheet, icon, link } from '../ui.js';
+import { D, CATS, CAT_ORDER, base, item, category, drive, itemsForBase, day, basePhoto } from '../trip.js';
+import { $, $$, esc, itemCardHTML, detailHTML, pagerHTML, openSheet, closeSheet, icon, link, heroHTML } from '../ui.js';
 import { isStarred, tripClock } from '../state.js';
 import { createMap } from '../map.js';
 import { go } from '../router.js';
@@ -17,6 +17,8 @@ let mapCtl = null;
 let st = { base: 'taiki', ...DEFAULTS, mode: 'list', page: 0, sel: null };
 // Jump the pager to the selected card only when the selection itself changes, not on every render.
 let snapToSel = false;
+// The base banner only changes with the base; keep its <img> across filter re-renders.
+let bannerBase = null;
 const mqDesktop = window.matchMedia('(min-width: 1100px)');
 const mqPhone = window.matchMedia('(max-width: 699px)');
 
@@ -107,8 +109,12 @@ function render() {
   const showMap = mqDesktop.matches || st.mode === 'map';
   const showList = mqDesktop.matches || st.mode === 'list';
   root.querySelector('.explore-bar').innerHTML = barHTML();
-  root.querySelector('.base-note').innerHTML = `<span><strong>${esc(b.name)}</strong>　${esc(b.dates)}</span>`;
-  root.querySelector('.base-desc').textContent = b.desc;
+  if (bannerBase !== st.base) {
+    bannerBase = st.base;
+    const p = basePhoto(st.base);
+    root.querySelector('.base-note').innerHTML = heroHTML(p, `<h1>${esc(b.name)}<span class="num">${esc(b.dates)}</span></h1><p>${esc(b.desc)}</p>`,
+      { cls: 'base-hero', alt: p?.caption || b.name, w: 1400 });
+  }
   const n = activeFilterCount();
   root.querySelector('.explore-tools').innerHTML = `
     <span class="count">${list.length} 項</span>
@@ -185,7 +191,6 @@ export function init(el) {
   el.innerHTML = `
     <div class="explore-bar"></div>
     <div class="base-note"></div>
-    <p class="small muted base-desc" style="margin:-6px 0 12px;max-width:70ch"></p>
     <div class="explore-tools"></div>
     <div class="explore-grid">
       <div class="explore-list"></div>

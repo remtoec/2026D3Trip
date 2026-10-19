@@ -83,6 +83,8 @@
 | `assets/theme.css` | 設計 tokens（淺色／深色）。只喺度加顏色 |
 | `assets/app.css` | 版面同元件：路牌 `.sign`、車程牌 `.plate`、印章 `.stamp-btn`、卡、日子條、carousel、sheet、地圖 |
 | `assets/overview.css` | 總覽／今日頁專用版面 |
+| `assets/photo.css` | 相片層：`.ph` 相框（失敗時變類別色塊＋字）、`.hero` 相片橫幅（路牌疊喺相上）、`.pcard` 今日相片卡、各列縮圖 |
+| `assets/photos.js` | `window.TRIP_PHOTOS`：每個活動ID同 `hotel:<id>` 一張相（`src`、後備 `alt`、來源頁 `page`、`site`、`caption`） |
 | `assets/js/main.js` | 路由、全站點擊委派（詳情、蓋印、複製）、`window.FIXED_TRIP` |
 | `assets/js/router.js` | hash 路由 |
 | `assets/js/trip.js` | 資料輔助：類別、車程文字、適合日子、Google Maps 連結 |
@@ -100,7 +102,7 @@
 **以下只係前版存檔，現行主頁唔載入：** `assets/proposal.js`、`assets/app.js`、`assets/data.js`、`assets/itinerary.js`、`assets/itinerary.css`。
 佢哋含舊替代路線、換走Moving Inn等過時內容；唔好因為搜尋見到而改錯檔案或重新接上主頁。
 
-載入次序（主頁）：Google Fonts → 固定版Leaflet CSS → `theme.css` → `app.css` → `overview.css`；scripts：`itinerary-data.js`（defer）→ `js/main.js`（module）；Leaflet用 **`async`**（`id="leaflet-js"`，onload／onerror設 `window.__leaflet`），`map.js` 等佢載入先畫地圖，CDN慢或者封鎖都唔會拖住成個網站（10秒後提示可用Google Maps連結，但Leaflet遲啲載到仍會照畫地圖）。
+載入次序（主頁）：Google Fonts → 固定版Leaflet CSS → `theme.css` → `app.css` → `overview.css` → `photo.css`；scripts：`itinerary-data.js`（defer）→ `photos.js`（defer）→ `js/main.js`（module）；Leaflet用 **`async`**（`id="leaflet-js"`，onload／onerror設 `window.__leaflet`），`map.js` 等佢載入先畫地圖，CDN慢或者封鎖都唔會拖住成個網站（10秒後提示可用Google Maps連結，但Leaflet遲啲載到仍會照畫地圖）。
 更新 `itinerary-data.js` 或CSS後，要同步改HTML引用嘅 `?v=`。Module之間嘅 import 冇加版本號；GitHub Pages快取約10分鐘。
 
 ### 路由同畫面
@@ -117,6 +119,10 @@
 `window.FIXED_TRIP`：`calculate`、`activities()`（目前景點頁篩選結果）、`setBase`、`jumpBase`、`setTab`（舊ID `plan`／`activities`／`stays` 仍接受）、`showDetail`、`selectActivity`、`state()`。
 
 ### 設計系統（唔好隨手改走）
+
+- **相片先行（2026-10-19第二版）**：使用者要求「用相講嘢」。每日、每個基地、每間住宿、每項活動都先出相，文字收短；長資料（點樣安排、營業、位置、來源）收入詳情嘅「更多資料」。
+- 相片係**熱連結**官方網站／網誌／Wikimedia（私人用途，使用者明確話唔使理版權），經 `wsrv.nl` 縮細轉WebP；失敗會順序試原圖→後備圖→類別色塊，唔會開天窗。詳情同住宿卡有「相片：來源」連結返原頁。**相片唔放入repo。**
+- 每日／每個基地用邊張相：`trip.js` 嘅 `DAY_PHOTO`、`BASE_PHOTO`；冇就跟住宿相、再跟當日推介。
 
 - 主角：**日本藍色道路指示牌（青看板）**＝每日「由→去＋車程」；小型車程牌 `.plate` 用同一語言。
 - 「想去」＝朱紅色**印章**（道の駅蓋印文化），清單即「印章簿」。

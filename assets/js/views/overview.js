@@ -2,15 +2,15 @@
 // Phone: the focus day at a glance (sign, tonight's stay, picks, tomorrow, pre-trip checks).
 // ≥700px adds key numbers, the route map, the 8-day board, the event calendar and road links;
 // ≥1100px also lazy-loads a snow-history snapshot from weather-data.js.
-import { D, TRIP_DAYS, WEEKDAY, day, item, stayFor, itemsForDay, fitDays, closedDays, hoursShort, category, sortItems, mapsRoute } from '../trip.js';
-import { esc, icon, link, signHTML, rowHTML, gmapsBtnHTML } from '../ui.js';
+import { D, TRIP_DAYS, WEEKDAY, day, item, stayFor, itemsForDay, fitDays, closedDays, hoursShort, category, sortItems, mapsRoute, dayPhoto, hotelPhoto } from '../trip.js';
+import { esc, icon, link, signHTML, photoCardHTML, photoHTML, heroHTML, gmapsBtnHTML } from '../ui.js';
 import { createMap } from '../map.js';
 import { tripClock, starredIds, isStarred } from '../state.js';
 import { calculate, hk } from '../budget.js';
 
 const AIRPORT = [42.7752, 141.6923];
 const WEATHER_SRC = './assets/weather-data.js?v=snow1';
-const MAX_ROWS = 4;
+const MAX_ROWS = 6;
 const MAX_EVENTS = 10;
 const TRIP_START = Date.UTC(2026, 11, 13);
 // Nearest JMA station per base. null = no station; never substitute another one (README §8).
@@ -89,7 +89,7 @@ function stampedFor(n) {
 }
 
 // ---------- Sections ----------
-function topHTML() {
+function statusHTML() {
   let h1, sub;
   if (clock.phase === 'before') {
     h1 = clock.daysToGo === 1 ? '聽日出發' : `仲有 <b class="num">${clock.daysToGo}</b> 日出發`;
@@ -101,10 +101,13 @@ function topHTML() {
     h1 = '旅程已完結';
     sub = '13–20/12/2026 北海道自駕';
   }
+  return `<div class="ov-status"><h1>${h1}</h1><p>${sub}</p></div>`;
+}
+
+function topHTML() {
   const { man, pair } = calculate();
   const money = n => `<small>HK$</small>${hk(n).replace('HK$', '')}`;
-  return `<div class="ov-status"><h1>${h1}</h1><p>${sub}</p></div>
-    <div class="ov-stats">
+  return `<div class="ov-stats">
       <ul aria-label="旅程數字">
         <li><span class="ov-stat-v num">7<small>晚</small></span><span class="ov-stat-l">四位男士住七晚，夫婦住五晚</span></li>
         <li><span class="ov-stat-v num">6${ARROW}<span class="visually-hidden">人出發，</span>4<small>人</small></span><span class="ov-stat-l">六人出發，四人留低滑雪</span></li>
@@ -124,7 +127,7 @@ function stayHTML(n) {
       <span class="ov-stay-txt"><span class="ov-label">${label}</span><strong>返香港，唔使住宿</strong><span class="ov-sub">${esc(d?.pax || '')}</span></span></div>`;
   }
   // The name link stretches over the row (住宿頁); the 開車去 button sits above it.
-  return `<div class="ov-stay"><span class="ov-stay-pin" aria-hidden="true">宿</span>
+  return `<div class="ov-stay">${photoHTML(hotelPhoto(h), { w: 240, cls: 'ov-stay-ph', alt: h.name, glyph: '宿', cat: 'stay' })}
     <span class="ov-stay-txt">
       <span class="ov-label">${label}</span>
       <a class="ov-stay-link" href="#/stays"><strong>${esc(h.name)}</strong></a>
@@ -137,13 +140,13 @@ function picksHTML(n) {
   const list = dayItems(n);
   const rows = list.slice(0, MAX_ROWS).map(a => {
     const off = closed(a).includes(n);
-    return `<li>${rowHTML(a, d.base, off ? { sub: `${dm(n)} 休息，揀第二日` } : {})}</li>`;
+    return `<li>${photoCardHTML(a, d.base, off ? { sub: `${dm(n)} 休息，揀第二日` } : {})}</li>`;
   }).join('');
   return `<section class="ov-picks" aria-labelledby="ov-picks-h">
     <div class="ov-head"><h2 id="ov-picks-h">${rel(n)}揀邊樣</h2>
       <a class="ov-head-link" href="#/days/${n}">睇全部${list.length > MAX_ROWS ? ` <span class="num">${list.length}</span> 項` : ''}</a></div>
+    ${rows ? `<ul class="ov-rows pcards">${rows}</ul>` : '<p class="ov-empty">呢日主要係移動同搭機，冇預排景點。</p>'}
     ${d.plan ? `<p class="ov-plan">${esc(d.plan)}</p>` : ''}
-    ${rows ? `<ul class="ov-rows">${rows}</ul>` : '<p class="ov-empty">呢日主要係移動同搭機，冇預排景點。</p>'}
   </section>`;
 }
 
@@ -152,6 +155,7 @@ function nextHTML(n) {
   if (!d) return '';
   const s = d.sign || {};
   return `<a class="ov-next" href="#/days/${d.day}">
+    ${photoHTML(dayPhoto(d.day), { w: 240, cls: 'ov-next-ph', glyph: String(d.day) })}
     <span class="ov-next-when"><span class="ov-label">${rel(d.day)}</span><span class="num">${dm(d.day)}</span><span class="ov-wd">（${WEEKDAY[d.day]}）</span></span>
     <span class="ov-next-route">${s.from ? `<span>${esc(s.from)}</span>${ARROW}${GOES}` : ''}<span>${esc(s.to || d.title)}</span></span>
     ${s.time ? `<span class="ov-next-time num">${esc(s.time)}<small>${esc(s.unit || '小時')}</small></span>` : ''}
@@ -163,11 +167,18 @@ function todayHTML() {
   const n = clock.day;
   const d = day(n);
   if (!d) return '';
-  const route = routeHref(n);
-  return `<div class="ov-hero">${signHTML(d, route ? { link: route, linkLabel: '全日路線' } : {})}</div>
-    ${stayHTML(n)}
+  return `${stayHTML(n)}
     ${picksHTML(n)}
     ${nextHTML(n)}`;
+}
+
+function heroBandHTML() {
+  const n = clock.day;
+  const d = day(n);
+  if (!d) return '';
+  const route = routeHref(n);
+  const p = dayPhoto(n);
+  return heroHTML(p, `${statusHTML()}${signHTML(d, route ? { link: route, linkLabel: '全日路線' } : {})}`, { cls: 'ov-hero', alt: p?.caption || d.title });
 }
 
 function boardHTML() {
@@ -180,6 +191,7 @@ function boardHTML() {
     const focus = n === clock.day && clock.phase !== 'after';
     const tag = focus ? `<em>${clock.phase === 'during' ? '今日' : '出發日'}</em>` : '';
     return `<li><a class="ov-day${focus ? ' is-focus' : ''}" href="#/days/${n}"${focus && clock.phase === 'during' ? ' aria-current="date"' : ''}>
+      ${photoHTML(dayPhoto(n), { w: 400, cls: 'ov-day-ph', glyph: String(n) })}
       <span class="ov-day-n"><b class="num">${n}</b><span>星期${WEEKDAY[n]}</span>${tag}</span>
       <span class="ov-day-route">${s.from ? `${esc(s.from)}${ARROW}${GOES}` : ''}${esc(s.to || d.title)}</span>
       ${s.time ? `<span class="ov-day-time num">${esc(s.time)}<small>${esc(s.unit || '小時')}</small></span>` : ''}
@@ -386,6 +398,7 @@ function slot(name, html) {
 function render() {
   clock = tripClock();
   root.querySelector('.ov').classList.toggle('is-before', clock.phase === 'before');
+  slot('hero', heroBandHTML());
   slot('top', topHTML());
   slot('today', todayHTML());
   slot('board', boardHTML());
@@ -406,7 +419,8 @@ function restoreFocus() {
 export function init(el) {
   root = el;
   el.innerHTML = `<div class="ov">
-    <header class="ov-top" data-slot="top"></header>
+    <header data-slot="hero"></header>
+    <div class="ov-top" data-slot="top"></div>
     <div class="ov-main">
       <div class="ov-today" data-slot="today"></div>
       <section class="ov-map" aria-labelledby="ov-map-h">

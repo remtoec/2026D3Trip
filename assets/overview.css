@@ -194,10 +194,9 @@
   .ov-map, .ov-board, .ov-cal-wrap, .ov-roads, .ov-todo { display: grid; }
   .ov-today {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas: "hero hero" "stay next" "picks picks";
+    grid-template-areas: "stay next" "picks picks";
     align-items: stretch;
   }
-  .ov-hero { grid-area: hero; }
   .ov-stay { grid-area: stay; }
   .ov-next { grid-area: next; }
   .ov-picks { grid-area: picks; }

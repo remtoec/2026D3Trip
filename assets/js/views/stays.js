@@ -1,6 +1,6 @@
 // 住宿及預算: the fixed hotel route plus the split-group budget (maths in budget.js, unchanged).
-import { hotel, mapsSearch } from '../trip.js';
-import { $, esc, link, gmapsBtnHTML, naviHTML } from '../ui.js';
+import { hotel, mapsSearch, hotelPhoto } from '../trip.js';
+import { $, esc, link, gmapsBtnHTML, naviHTML, photoHTML, creditHTML } from '../ui.js';
 import { calculate, hk } from '../budget.js';
 
 let root = null;
@@ -14,13 +14,15 @@ const PRICE_ROWS = [
 ];
 
 function hotelHTML(h) {
+  const p = hotelPhoto(h);
   return `<article class="panel hotel${h.id === 'moving' ? ' is-key' : ''}">
-    <span class="dates">${esc(h.dates)}</span>
+    <figure class="hotel-photo">${photoHTML(p, { w: 900, alt: h.name, glyph: '宿', cat: 'stay' })}
+      <figcaption><span class="dates num">${esc(h.dates)}</span>${creditHTML(p)}</figcaption></figure>
     <h3>${esc(h.name)}</h3>
     <p class="small muted">${esc(h.area)}</p>
     <p style="font-size:14.5px">${esc(h.desc)}</p>
     <dl><dt>床位</dt><dd>${esc(h.beds)}</dd><dt>價格</dt><dd>${esc(h.price)}</dd></dl>
-    <p class="callout" style="font-size:13.5px">${esc(h.note)}</p>
+    <details class="hotel-note"><summary>要留意</summary><p>${esc(h.note)}</p></details>
     ${naviHTML(h.navi)}
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${gmapsBtnHTML(h, { label: '開車去', cls: 'btn small' })}<a class="btn small ghost" href="${esc(mapsSearch(h))}" target="_blank" rel="noopener">地點資料</a>${link(h.url, '官方資料', 'link-btn')}</div>
   </article>`;

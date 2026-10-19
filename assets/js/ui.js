@@ -1,5 +1,5 @@
 // Shared renderers and small UI helpers (sheet, toast, clipboard).
-import { CATS, PRIORITY, CONFIDENCE, TRIP_DAYS, WEEKDAY, category, drive, fitDays, closedDays, hoursShort, mapsSearch, mapsGo, mapsRoute, travelModes, baseOrigin, primaryBase, base, hotel } from './trip.js';
+import { CATS, PRIORITY, CONFIDENCE, TRIP_DAYS, WEEKDAY, category, drive, fitDays, closedDays, hoursShort, mapsSearch, mapsGo, mapsRoute, travelModes, baseOrigin, primaryBase, base, hotel, itemPhoto } from './trip.js';
 import { isStarred } from './state.js';
 
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -28,6 +28,54 @@ const LANG = { ja: ['日', 'ja', '日文'], 'zh-TW': ['台', 'tw', '台灣'], 'z
 const BOOKING = { none: '毋須預約', recommended: '建議預約', required: '要預約' };
 
 export const link = (url, label, cls = '') => url ? `<a ${cls ? `class="${cls}" ` : ''}href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>` : '';
+
+// ---------- Photos ----------
+// Pictures are hotlinked from official sites and blogs (private trip page). They go through the wsrv.nl
+// image cache so phones get a small WebP; on error the <img> walks data-fallback (original, then the
+// alternate), and finally the frame turns into a category tile, so a dead link never leaves a hole.
+const sized = (url, w) => `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${w}&fit=cover&we&output=webp&q=76`;
+
+export function photoHTML(p, { w = 720, cls = '', alt = '', eager = false, cat = '', glyph = '' } = {}) {
+  const tile = `<span class="ph-glyph" aria-hidden="true">${esc(glyph)}</span>`;
+  const dc = cat ? ` data-cat="${esc(cat)}"` : '';
+  if (!p || !p.src) return `<span class="ph is-empty ${cls}"${dc}>${tile}</span>`;
+  const chain = [p.src, p.alt && sized(p.alt, w), p.alt].filter(Boolean);
+  return `<span class="ph ${cls}"${dc}>${tile}<img src="${esc(sized(p.src, w))}" data-fallback="${esc(JSON.stringify(chain))}" alt="${esc(alt || p.caption || '')}"
+    referrerpolicy="no-referrer" decoding="async" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'}></span>`;
+}
+
+// Photo of an activity, falling back to a tile in its category colour with its glyph (景／湯／食…).
+export function itemPhotoHTML(a, opts = {}) {
+  const c = category(a);
+  return photoHTML(itemPhoto(a), { alt: a.name, cat: c, glyph: CATS[c].glyph, ...opts });
+}
+
+// "相片：<site>" link back to the page the picture came from.
+export function creditHTML(p, cls = 'ph-credit') {
+  if (!p || !p.page) return '';
+  return `<a class="${cls}" href="${esc(p.page)}" target="_blank" rel="noopener">相片：${esc(p.site || new URL(p.page).hostname)}</a>`;
+}
+
+// Full-bleed photo band with content laid over its lower edge (road sign, place name).
+export function heroHTML(p, inner, { cls = '', alt = '', eager = true, w = 1600 } = {}) {
+  return `<div class="hero ${cls}">${photoHTML(p, { w, eager, alt, cls: 'hero-ph' })}<div class="hero-in">${inner}</div>${creditHTML(p, 'ph-credit on-photo')}</div>`;
+}
+
+export function initPhotos() {
+  document.addEventListener('error', e => {
+    const img = e.target;
+    if (!(img instanceof HTMLImageElement) || !img.closest('.ph')) return;
+    let rest = [];
+    try { rest = JSON.parse(img.dataset.fallback || '[]'); } catch { rest = []; }
+    if (rest.length) {
+      img.dataset.fallback = JSON.stringify(rest.slice(1));
+      img.src = rest[0];
+      return;
+    }
+    img.closest('.ph').classList.add('is-empty');
+    img.remove();
+  }, true);
+}
 
 // ---------- Road sign ----------
 export function signHTML(d, { link: linkHref = '', linkLabel = '', compact = false } = {}) {
@@ -102,15 +150,36 @@ export function gmapsHTML(p, { from = null, fromLabel = '' } = {}) {
 export function itemCardHTML(a, baseId, { selected = false } = {}) {
   const hours = hoursShort(a);
   return `<article class="item${selected ? ' is-selected' : ''}" data-cat="${category(a)}" data-item="${esc(a.id)}">
-    <div class="item-top">${catHTML(a)}${stampHTML(a.id, a.name)}</div>
-    <h3 class="item-title">${esc(a.name)}${a.nameJa ? `<small lang="ja">${esc(a.nameJa)}</small>` : ''}</h3>
-    <p class="item-hook">${esc(a.hook || a.desc)}</p>
-    <div class="item-meta">${plateHTML(a, baseId)}${hours ? `<span class="time">${esc(hours)}</span>` : ''}${a.stay ? `<span>玩${esc(a.stay)}</span>` : ''}${flagsHTML(a)}</div>
-    ${daystripHTML(a)}
-    <div class="item-actions">
-      <button class="btn small" type="button" data-detail="${esc(a.id)}">詳情</button>
-      <button class="link-btn" type="button" data-locate="${esc(a.id)}">地圖</button>
-      ${gmapsBtnHTML(a, { cls: 'btn small ghost gmaps more' })}
+    <div class="item-media">
+      <button class="item-media-hit" type="button" data-detail="${esc(a.id)}" tabindex="-1" aria-hidden="true">${itemPhotoHTML(a, { w: 720 })}</button>
+      ${plateHTML(a, baseId)}${stampHTML(a.id, a.name)}
+    </div>
+    <div class="item-body">
+      ${catHTML(a)}
+      <h3 class="item-title">${esc(a.name)}</h3>
+      <p class="item-hook">${esc(a.hook || a.desc)}</p>
+      <div class="item-meta">${hours ? `<span class="time">${esc(hours)}</span>` : ''}${a.stay ? `<span>玩${esc(a.stay)}</span>` : ''}${flagsHTML(a)}</div>
+      ${daystripHTML(a)}
+      <div class="item-actions">
+        <button class="btn small" type="button" data-detail="${esc(a.id)}">詳情</button>
+        <button class="link-btn" type="button" data-locate="${esc(a.id)}">地圖</button>
+        ${gmapsBtnHTML(a, { cls: 'btn small ghost gmaps more' })}
+      </div>
+    </div>
+  </article>`;
+}
+
+// ---------- Photo card (today's picks): the picture carries the place, text sits on a scrim ----------
+export function photoCardHTML(a, baseId, { sub = '' } = {}) {
+  const dv = drive(a, baseId);
+  return `<article class="pcard" data-cat="${category(a)}">
+    ${itemPhotoHTML(a, { w: 640 })}
+    <button class="pcard-hit" type="button" data-detail="${esc(a.id)}"><span class="visually-hidden">睇${esc(a.name)}詳情</span></button>
+    ${stampHTML(a.id, a.name)}
+    <div class="pcard-body">
+      <span class="pcard-meta">${plateHTML(a, baseId)}${a.priority === 'main' ? '<span class="flag ok">主推</span>' : ''}</span>
+      <h3>${esc(a.name)}</h3>
+      <p>${esc(sub || a.hook || dv.text)}</p>
     </div>
   </article>`;
 }
@@ -121,7 +190,7 @@ export function rowHTML(a, baseId, { sub = '' } = {}) {
   const line = sub || [drive(a, baseId).text, hours].filter(Boolean).join('・');
   return `<div class="row-item" data-cat="${category(a)}">
     <button class="row-main" type="button" data-detail="${esc(a.id)}">
-      <span class="cat"><i aria-hidden="true">${CATS[category(a)].glyph}</i></span>
+      ${itemPhotoHTML(a, { w: 200, cls: 'row-thumb' })}
       <span><strong>${esc(a.name)}</strong><span class="sub">${esc(line)}</span></span>
       <span class="end">${isStarred(a.id) ? '<span class="flag stamp">想去</span>' : ''}${a.priority === 'main' ? '<span class="flag ok">主推</span>' : ''}</span>
     </button>
@@ -155,25 +224,39 @@ export function detailHTML(a, baseId, { withTitle = false } = {}) {
     }).join('')}</ul></section>` : '';
   const navi = naviHTML(a.navi);
   const sources = (a.sources || []).map(([label, url]) => link(url, label)).join('');
+  const p = itemPhoto(a);
+  const dv = drive(a, b);
+  const hours = hoursShort(a);
+  const fact = (k, v, cls = '') => v ? `<div class="fact${cls}"><dt>${k}</dt><dd>${v}</dd></div>` : '';
   return `<article class="detail" data-cat="${category(a)}">
+    <figure class="detail-photo">${itemPhotoHTML(a, { w: 960, eager: true })}
+      ${p ? `<figcaption>${p.caption ? `<span>${esc(p.caption)}</span>` : ''}${creditHTML(p)}</figcaption>` : ''}</figure>
     <div class="item-top">${catHTML(a)}${stampHTML(a.id, a.name)}</div>
     ${withTitle ? `<h2 class="detail-title" tabindex="-1">${esc(a.name)}${a.nameJa ? `<small lang="ja">${esc(a.nameJa)}</small>` : ''}</h2>` : (a.nameJa ? `<p class="faint" lang="ja">${esc(a.nameJa)}</p>` : '')}
     ${a.hook ? `<p class="detail-hook">${esc(a.hook)}</p>` : ''}
-    <p>${esc(a.desc)}</p>
-    <div class="item-meta">${plateHTML(a, b)}<span>${esc(drive(a, b).text)}${base(b) ? `（由${esc(base(b).name)}）` : ''}</span>${flagsHTML(a)}</div>
+    <dl class="fact-grid">
+      ${fact('車程', `${plateHTML(a, b)}<span>${esc(dv.text)}${base(b) && !a.enRoute ? `<small>由${esc(base(b).name)}</small>` : ''}</span>`, ' is-drive')}
+      ${fact('時間', esc(hours || a.status))}
+      ${fact('費用', esc(a.cost))}
+      ${fact('預約', a.booking ? (BOOKING[a.booking] || esc(a.booking)) : '')}
+    </dl>
+    <div class="flags">${flagsHTML(a)}</div>
     ${gmapsHTML(a, { from: origin, fromLabel: fromHotel ? '由' + (fromHotel.short || fromHotel.name) + '出發' : (base(b) && base(b).hotel ? '由住宿出發' : '') })}
     <section class="detail-section"><h3>邊日啱去</h3>${daystripHTML(a)}
       <div class="daystrip-legend" style="margin-top:6px"><span>深色＝適合</span><span>紅線＝休息</span></div></section>
-    <section class="detail-section"><h3>點樣放入行程</h3><p>${esc(a.fit)}</p></section>
-    <dl class="detail-facts">
-      <dt>開放</dt><dd>${esc(a.status)}</dd>
-      ${a.stay ? `<dt>建議停留</dt><dd>${esc(a.stay)}</dd>` : ''}
-      <dt>費用</dt><dd>${esc(a.cost)}</dd>
-      ${a.booking ? `<dt>預約</dt><dd>${BOOKING[a.booking] || esc(a.booking)}</dd>` : ''}
-      <dt>位置</dt><dd>${esc(a.positionNote)}</dd>
-    </dl>
-    ${food}${tips}${navi}
-    <div class="detail-section"><h3>來源</h3><div class="link-list">${link(a.url, '官方資料')}${sources}</div></div>
+    <p class="detail-desc">${esc(a.desc)}</p>
+    ${food}${tips}
+    <details class="detail-more">
+      <summary>更多資料：點樣安排、營業、位置、來源</summary>
+      <section class="detail-section"><h3>點樣放入行程</h3><p>${esc(a.fit)}</p></section>
+      <dl class="detail-facts">
+        <dt>開放</dt><dd>${esc(a.status)}</dd>
+        ${a.stay ? `<dt>建議停留</dt><dd>${esc(a.stay)}</dd>` : ''}
+        <dt>位置</dt><dd>${esc(a.positionNote)}</dd>
+      </dl>
+      ${navi}
+      <div class="detail-section"><h3>來源</h3><div class="link-list">${link(a.url, '官方資料')}${sources}${p && p.page ? link(p.page, '相片來源') : ''}</div></div>
+    </details>
     <p class="source-meta">${conf ? `<span class="flag ${conf.tone}">${conf.label}</span> ` : ''}資料查核：${esc(a.checked || window.ITINERARY_DATA.updated)}。未代訂，實際場次及營業以官方為準。</p>
   </article>`;
 }

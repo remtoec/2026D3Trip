@@ -14,11 +14,12 @@ const TRIP_DAYS = [13, 14, 15, 16, 17, 18, 19, 20];
 
 const context = { window: {} };
 vm.createContext(context);
-for (const file of ['assets/itinerary-data.js', 'assets/weather-data.js']) {
+for (const file of ['assets/itinerary-data.js', 'assets/weather-data.js', 'assets/photos.js']) {
   vm.runInContext(fs.readFileSync(file, 'utf8'), context);
 }
 const trip = context.window.ITINERARY_DATA;
 const weather = context.window.TRIP_WEATHER;
+const photos = context.window.TRIP_PHOTOS;
 
 assert.equal(trip.hotels.length, EXPECT.hotels, 'hotel count');
 assert.equal(trip.bases.length, EXPECT.bases, 'base count');
@@ -87,7 +88,21 @@ near(base0.group - two.group, 408, 'two cabins → group −408');
 const river = calculate({ river: true });
 near(river.riverTotal, 3060, 'river sauna six people');
 
+// Photos (assets/photos.js): keys must be real activity ids or hotel:<id>; links must be https.
+assert(photos && typeof photos === 'object', 'TRIP_PHOTOS missing');
+const photoKeys = new Set([...ids, ...trip.hotels.map(h => 'hotel:' + h.id)]);
+let photoCount = 0;
+for (const [key, p] of Object.entries(photos)) {
+  if (key.startsWith('_')) continue;
+  assert(photoKeys.has(key), `photo key ${key} matches no activity or hotel`);
+  if (!p) continue;
+  assert(/^https:\/\//.test(p.src), `photo ${key}: src https`);
+  assert(!p.alt || /^https:\/\//.test(p.alt), `photo ${key}: alt https`);
+  assert(!p.page || /^https?:\/\//.test(p.page), `photo ${key}: page url`);
+  photoCount++;
+}
+
 assert.equal(weather.stations.length, EXPECT.stations);
 assert.equal(weather.stations.reduce((n, s) => n + s.days.length, 0), EXPECT.snowRows);
 
-console.log('Data consistency OK', JSON.stringify({ activities: trip.activities.length, perBase, excluded: trip.excluded.length }));
+console.log('Data consistency OK', JSON.stringify({ activities: trip.activities.length, perBase, excluded: trip.excluded.length, photos: photoCount }));
