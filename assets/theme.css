@@ -1,0 +1,111 @@
+/* Design tokens: snow-white base, road-sign blue (青看板), hanko vermilion for "想去" stamps. */
+:root {
+  color-scheme: light;
+  --snow: #f4f7f9;
+  --paper: #ffffff;
+  --frost: #ebf0f4;
+  --ice: #d9e1e8;
+  --ink: #15233a;
+  --ink-2: #48586c;
+  --ink-3: #5f6c7c;
+
+  --sign: #1b5aa6;
+  --sign-deep: #154a8a;
+  --sign-ink: #ffffff;
+  --on-fill: #ffffff;
+  --link: #1b5aa6;
+  --stamp: #c4352b;
+  --stamp-soft: #fbe9e6;
+
+  --cat-sight: #1b5aa6;
+  --cat-event: #8d6100;
+  --cat-activity: #276b53;
+  --cat-onsen: #874a80;
+  --cat-food: #ad4a1c;
+  --cat-stop: #56636f;
+  --cat-stay: #15233a;
+
+  --ok: #276b53;
+  --ok-soft: #e3f1ea;
+  --warn: #8d6100;
+  --warn-soft: #f8efd9;
+  --off: #b9c3cd;
+
+  --font-text: "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-num: "Barlow Semi Condensed", "Noto Sans TC", "PingFang HK", system-ui, sans-serif;
+
+  --r-sign: 6px;
+  --r-card: 14px;
+  --r-sheet: 22px;
+  --shadow-lift: 0 1px 2px rgba(21, 35, 58, 0.06), 0 8px 24px rgba(21, 35, 58, 0.08);
+  --shadow-sheet: 0 -8px 40px rgba(21, 35, 58, 0.18);
+
+  --gutter: 16px;
+  --topbar-h: 56px;
+  --tabbar-h: 64px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --snow: #0c1420;
+    --paper: #131e2e;
+    --frost: #1a2738;
+    --ice: #263649;
+    --ink: #e7edf3;
+    --ink-2: #aab6c4;
+    --ink-3: #8794a5;
+    --sign: #2463b3;
+    --sign-deep: #1b4f90;
+    --link: #79aef0;
+    --on-fill: #0c1420;
+    --stamp: #f0675a;
+    --stamp-soft: #3a1f21;
+    --cat-sight: #79aef0;
+    --cat-event: #e2b44f;
+    --cat-activity: #6cc4a0;
+    --cat-onsen: #d59bd0;
+    --cat-food: #f0915f;
+    --cat-stop: #a9b5c1;
+    --cat-stay: #e7edf3;
+    --ok: #6cc4a0;
+    --ok-soft: #173229;
+    --warn: #e2b44f;
+    --warn-soft: #33290f;
+    --off: #3a4a5e;
+    --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+    --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --snow: #0c1420;
+  --paper: #131e2e;
+  --frost: #1a2738;
+  --ice: #263649;
+  --ink: #e7edf3;
+  --ink-2: #aab6c4;
+  --ink-3: #8794a5;
+  --sign: #2463b3;
+  --sign-deep: #1b4f90;
+  --link: #79aef0;
+  --on-fill: #0c1420;
+  --stamp: #f0675a;
+  --stamp-soft: #3a1f21;
+  --cat-sight: #79aef0;
+  --cat-event: #e2b44f;
+  --cat-activity: #6cc4a0;
+  --cat-onsen: #d59bd0;
+  --cat-food: #f0915f;
+  --cat-stop: #a9b5c1;
+  --cat-stay: #e7edf3;
+  --ok: #6cc4a0;
+  --ok-soft: #173229;
+  --warn: #e2b44f;
+  --warn-soft: #33290f;
+  --off: #3a4a5e;
+  --shadow-lift: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.5);
+}

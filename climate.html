@@ -1,9 +1,156 @@
-<!doctype html><html lang="zh-Hant-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>近年天氣／積雪｜北海道旅行</title><link rel="stylesheet" href="./assets/style.css?v=snow1"><script defer src="./assets/weather-data.js?v=snow1"></script><script defer src="./assets/weather.js?v=snow1"></script><script defer src="./assets/climate-bridge.js?v=1"></script></head><body><header><div class="wrap"><div class="masthead"><div><div class="eyebrow">2021–2025 · HISTORICAL OBSERVATIONS</div><h1 id="climate-title">近年天氣／積雪</h1></div><a class="btn soft" href="./index.html">返回行程／活動 →</a></div></div></header><main class="wrap"><p class="note" style="margin-bottom:20px">呢份歷史資料維持原有11站範圍；未包括Moving Inn所在地大樹町，唔會用占冠或新得站冒充當地實況。</p><section id="panel-snow" class="tabpanel" role="tabpanel" aria-labelledby="climate-title">
-<div class="section-title"><div><div class="eyebrow">2021–2025 · SAME DATES</div><h2>12 月中旬，近年有幾多雪？</h2></div><p>日本氣象廳近五年同一段日子。降雪係新落嘅雪，積雪係地面雪層深度；可以幫手揀地區，唔係 2026 年天氣預報。</p></div>
-<div class="weather-controls"><div class="subtabs" aria-label="比較日期"><button data-snow-period="trip" aria-pressed="true">13–20 日・全程</button><button data-snow-period="ski" aria-pressed="false">18–19 日・滑雪</button></div><label>比較年份 <select id="snow-year"><option value="all">2021–2025 五年</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option></select></label><span class="small muted" id="snow-sample"></span></div>
-<p class="note" style="margin-bottom:18px">觀測站唔等於景點門口或山上雪場；下表會標明用邊個站。歷史積雪日數唔係未來落雪機率，亦唔代表雪道全部開放。</p>
-<div class="weather-layout"><div class="card"><div class="row spread" style="margin-bottom:13px"><h3>地區比較</h3><span class="small muted">撳地區睇逐年記錄</span></div><div class="subtabs weather-metrics" aria-label="比較項目"><button data-snow-metric="depth" aria-pressed="true">平均積雪深度</button><button data-snow-metric="snowfall" aria-pressed="false">期間新雪合計</button><button data-snow-metric="covered" aria-pressed="false">有積雪記錄日數</button></div><p id="snow-chart-caption" class="small muted" style="margin:12px 0"></p><div id="snow-bars" class="snow-bars"></div></div><aside class="card weather-detail"><label for="snow-station" class="small muted">地區／附近觀測站</label><select id="snow-station"></select><div id="snow-detail" aria-live="polite"></div></aside></div>
-<div class="card" style="margin-top:18px"><div class="row spread"><h3 id="snow-daily-title">逐日積雪記錄</h3><a href="./assets/snow-history.csv" download="hokkaido-snow-2021-2025.csv" class="small">下載完整逐日資料 CSV ↗</a></div><p class="small muted" style="margin:9px 0">單位 cm；每格係當日觀測到嘅最大積雪深度，唔代表全日保持同一深度。0 可能包括不足 1 cm，唔一定完全冇雪。其他天氣欄位及原始符號可下載查閱。</p><div class="table-scroll" id="snow-daily"></div><div class="snow-key small muted"><span><i class="snow-swatch snow-0"></i>0</span><span><i class="snow-swatch snow-1"></i>1–9</span><span><i class="snow-swatch snow-2"></i>10–29</span><span><i class="snow-swatch snow-3"></i>30–59</span><span><i class="snow-swatch snow-4"></i>60+ cm</span></div></div>
-<details class="card weather-method" style="margin-top:18px"><summary>點樣計？觀測站與來源</summary><p>逐年取 12 月 13–20 日（八日），或 18–19 日（兩日）。五年合計最多 40／10 個觀測日。每日最深積雪 ≥1 cm 列作「有積雪記錄」；≥10 cm 另列日數供雪景參考，唔係滑雪開放門檻。</p><p>平均積雪深度係每日最深積雪嘅平均；新雪合計先按每年選定期間加總，再取完整年份平均。氣溫顯示日最高／日最低嘅平均，唔係期間極端值。年份間會有落差，亦唔將歷史比例當成 2026 年預報。</p><p>JMA「--」無現象按 0；空白、未觀測、缺測及附品質符號嘅值排除，唔補成零。有效日數同完整降雪年份會分開列出；小金湯冇氣溫值。CSV 保留原始欄位及每月來源連結。</p><p>資料查核：2026.10.12。本站係自行整理嘅歷史摘要，日後氣象廳更正資料未必同步。底圖上酒店位置並非呢啲觀測站位置。</p><div id="snow-method-sources"></div></details>
-</section>
-<dialog id="detail"></dialog></main><footer class="footer"><div class="wrap"><a href="./index.html">返回固定酒店行程</a> · 資料查核2026.10.12</div></footer></body></html>
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b5aa6">
+<title>近年天氣／積雪｜北海道・雪與湯</title>
+<meta name="description" content="日本氣象廳 2021–2025 年 12 月 13–20 日 11 個北海道觀測站嘅積雪、降雪及氣溫記錄，用嚟比較地區，唔係天氣預報。">
+<link rel="icon" href="data:,">
+<script>
+  try { var t = localStorage.getItem('d3jp26.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="./assets/theme.css?v=4">
+<link rel="stylesheet" href="./assets/style.css?v=snow2">
+<script defer src="./assets/weather-data.js?v=snow1"></script>
+<script defer src="./assets/weather.js?v=snow1"></script>
+<script defer src="./assets/climate-bridge.js?v=1"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到內容</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="./index.html#/today"><strong>北海道・雪與湯</strong><span>13–20/12/2026</span></a>
+    <div class="topbar-tools">
+      <a class="text-link" href="./index.html#/days">返回行程</a>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切換深淺色">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="page" tabindex="-1">
+  <div class="intro">
+    <div class="page-head">
+      <h1 id="climate-title">近年天氣／積雪</h1>
+      <p class="lede">12 月中旬，近年有幾多雪？呢度用日本氣象廳 <span class="num">2021–2025</span> 年同一段日子嘅觀測比較。降雪係新落嘅雪，積雪係地面雪層深度；可以幫手揀地區，唔係 <span class="num">2026</span> 年天氣預報。</p>
+    </div>
+    <aside class="notice" aria-labelledby="notice-title">
+      <h2 id="notice-title">睇數字之前</h2>
+      <ul>
+        <li>資料維持原有 <span class="num">11</span> 個觀測站，<strong>未包括 Moving Inn 所在嘅大樹町</strong>；唔會用占冠或新得站冒充當地實況。</li>
+        <li>觀測站唔等於景點門口或山上雪場，下面會標明用邊個站。</li>
+        <li>歷史積雪日數唔係未來落雪機率，亦唔代表雪道全部開放。</li>
+      </ul>
+    </aside>
+  </div>
+
+  <section id="panel-snow" class="tabpanel" aria-labelledby="climate-title">
+    <div class="weather-controls">
+      <div class="control">
+        <span class="control-label" id="period-label">比較日期</span>
+        <div class="seg" role="group" aria-labelledby="period-label">
+          <button type="button" data-snow-period="trip" aria-pressed="true">全程 <span class="num">13–20</span> 日</button>
+          <button type="button" data-snow-period="ski" aria-pressed="false">滑雪 <span class="num">18–19</span> 日</button>
+        </div>
+      </div>
+      <label class="control">
+        <span class="control-label">比較年份</span>
+        <span class="select">
+          <select id="snow-year">
+            <option value="all">2021–2025 五年</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+          </select>
+        </span>
+      </label>
+      <p class="sample" id="snow-sample"></p>
+    </div>
+
+    <div class="weather-layout">
+      <section class="card compare" aria-labelledby="compare-title">
+        <div class="card-head">
+          <h2 id="compare-title">地區比較</h2>
+          <p class="hint">撳地區睇逐年記錄</p>
+        </div>
+        <div class="seg seg-metric" role="group" aria-label="比較項目">
+          <button type="button" data-snow-metric="depth" aria-pressed="true" aria-label="平均積雪深度">平均積雪<span class="opt">深度</span></button>
+          <button type="button" data-snow-metric="snowfall" aria-pressed="false" aria-label="期間新雪合計"><span class="opt">期間</span>新雪合計</button>
+          <button type="button" data-snow-metric="covered" aria-pressed="false" aria-label="有積雪記錄日數">有積雪<span class="opt">記錄</span>日數</button>
+        </div>
+        <p id="snow-chart-caption" class="caption"></p>
+        <div id="snow-bars" class="snow-bars"></div>
+      </section>
+
+      <aside class="card weather-detail" aria-label="所選地區">
+        <label for="snow-station" class="control-label">地區／附近觀測站</label>
+        <span class="select"><select id="snow-station"></select></span>
+        <div id="snow-detail" aria-live="polite"></div>
+      </aside>
+    </div>
+
+    <section class="card daily" aria-labelledby="snow-daily-title">
+      <div class="card-head">
+        <h2 id="snow-daily-title">逐日積雪記錄</h2>
+        <a class="btn-ghost" href="./assets/snow-history.csv" download="hokkaido-snow-2021-2025.csv">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>下載逐日資料（CSV）
+        </a>
+      </div>
+      <p class="card-note">單位 cm。每格係當日觀測到嘅最大積雪深度，唔代表全日保持同一深度；0 可能包括不足 1 cm，唔一定完全冇雪。其他天氣欄位及原始符號可下載 CSV 查閱。</p>
+      <div class="table-scroll" id="snow-daily" tabindex="0" role="region" aria-label="逐日積雪表，可左右捲動"></div>
+      <div class="snow-key" aria-label="顏色代表嘅積雪深度（cm）">
+        <span><i class="snow-swatch snow-0"></i><span class="num">0</span></span>
+        <span><i class="snow-swatch snow-1"></i><span class="num">1–9</span></span>
+        <span><i class="snow-swatch snow-2"></i><span class="num">10–29</span></span>
+        <span><i class="snow-swatch snow-3"></i><span class="num">30–59</span></span>
+        <span><i class="snow-swatch snow-4"></i><span class="num">60+ cm</span></span>
+        <span><i class="snow-swatch snow-missing"></i>未有資料</span>
+      </div>
+    </section>
+
+    <details class="card weather-method">
+      <summary>點樣計？觀測站與來源</summary>
+      <div class="method-body">
+        <p>逐年取 12 月 13–20 日（八日），或 18–19 日（兩日）。五年合計最多 40／10 個觀測日。每日最深積雪 ≥1 cm 列作「有積雪記錄」；≥10 cm 另列日數供雪景參考，唔係滑雪開放門檻。</p>
+        <p>平均積雪深度係每日最深積雪嘅平均；新雪合計先按每年選定期間加總，再取完整年份平均。氣溫顯示日最高／日最低嘅平均，唔係期間極端值。年份間會有落差，亦唔將歷史比例當成 2026 年預報。</p>
+        <p>JMA「--」無現象按 0；空白、未觀測、缺測及附品質符號嘅值排除，唔補成零。有效日數同完整降雪年份會分開列出；小金湯冇氣溫值。CSV 保留原始欄位及每月來源連結。</p>
+        <p>資料查核：2026-10-12。本站係自行整理嘅歷史摘要，日後氣象廳更正資料未必同步。主頁地圖上嘅酒店位置並非呢啲觀測站位置。</p>
+        <div id="snow-method-sources"></div>
+      </div>
+    </details>
+  </section>
+
+  <dialog id="detail"></dialog>
+</main>
+
+<footer class="site-foot">
+  <div class="site-foot-inner">
+    <span>資料查核：<span class="num">2026-10-12</span>。歷史觀測記錄，唔係天氣預報。</span>
+    <a href="./index.html#/today">返回固定酒店行程</a>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('theme-toggle');
+    function current() {
+      var t = root.dataset.theme;
+      if (t === 'light' || t === 'dark') return t;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('d3jp26.theme', next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+/* 總覽／今日 view. Phone = the focus day at a glance; ≥700 adds map, board, calendar; ≥1100 dashboard grid.
+   Tokens come from theme.css; shared components (.sign, .row-item, .panel …) from app.css. */
+.ov { display: grid; gap: 14px; }
+.ov > *, .ov-main > *, .ov-today > *, .ov-col > * { min-width: 0; }
+
+.ov-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; }
+.ov-head h2 { font-size: 17px; }
+.ov-head-link {
+  display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin: -6px 0;
+  font-size: 14.5px; font-weight: 600; color: var(--cat-sight); text-decoration: none; white-space: nowrap;
+}
+.ov-head-link:hover { text-decoration: underline; }
+.ov-label { font-size: 13px; font-weight: 500; color: var(--ink-3); }
+.ov-note { font-size: 13px; color: var(--ink-3); }
+.ov-note strong { color: var(--ink-2); font-weight: 600; }
+.ov-src { font-size: 12px; color: var(--ink-3); }
+.ov-empty { font-size: 14px; color: var(--ink-2); padding: 14px; border: 1px dashed var(--ice); border-radius: 12px; }
+.ov-count { font-size: 15px; font-weight: 600; color: var(--ink-3); }
+.ov-arrow { display: inline-block; flex: none; width: 18px; height: 10px; margin: 0 5px; vertical-align: middle; }
+.ov-arrow path { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Status line (phone: one compact line) ---------- */
+.ov-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 28px; }
+.ov-status { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+.ov-status h1 { font-size: 20px; line-height: 1.3; letter-spacing: 0; }
+.ov-status h1 b { font: 700 27px/1 var(--font-num); margin: 0 2px; }
+.ov-status p { font-size: 14px; color: var(--ink-2); }
+.ov-stats { display: none; }
+
+/* ---------- Focus day ---------- */
+.ov-today { display: grid; gap: 12px; }
+/* 全日路線 pill: a focus ring that shows on blue, and a 44px target on phones. */
+.ov-hero .sign-link:focus-visible { outline-color: #fff; outline-offset: 3px; }
+@media (max-width: 699px) { .ov-hero .sign-link { min-height: 44px; } }
+
+.ov-stay {
+  position: relative;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  min-height: 64px; padding: 12px 14px;
+  background: var(--paper); border: 1px solid var(--ice); border-radius: 12px; color: var(--ink);
+}
+/* Stretched link: the whole row opens 住宿; the 開車去 button stays on top of it. */
+.ov-stay-link { color: inherit; text-decoration: none; }
+.ov-stay-link::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
+.ov-stay-link:focus-visible { outline: none; }
+.ov-stay-link:focus-visible::after { outline: 2.5px solid var(--sign); outline-offset: 2px; }
+.ov-stay:hover:not(:has(.btn:hover)) { border-color: var(--ink-3); }
+.ov-stay .btn { position: relative; z-index: 1; min-height: 44px; }
+.ov-stay-pin {
+  width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center;
+  background: var(--ink); color: var(--paper); font-size: 15px; font-weight: 700;
+}
+.ov-stay.is-none .ov-stay-pin { background: var(--frost); color: var(--ink-2); }
+.ov-stay-txt { display: flex; flex-direction: column; min-width: 0; }
+.ov-stay strong { font-size: 16.5px; line-height: 1.35; }
+.ov-sub { display: flex; flex-wrap: wrap; gap: 0 12px; font-size: 13.5px; color: var(--ink-2); }
+.ov-next > svg { width: 18px; height: 18px; color: var(--ink-3); }
+
+.ov-picks { display: grid; gap: 8px; }
+.ov-plan { font-size: 14.5px; color: var(--ink-2); }
+.ov-rows { display: grid; gap: 8px; }
+
+.ov-next {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "when time go" "route route go";
+  align-items: center; gap: 2px 12px; min-height: 60px; padding: 11px 14px;
+  border-radius: 12px; background: var(--frost); color: var(--ink); text-decoration: none;
+}
+.ov-next:hover { background: var(--ice); }
+.ov-next-when { grid-area: when; display: flex; align-items: baseline; gap: 8px; }
+.ov-next-when .num { font-size: 16px; font-weight: 600; color: var(--ink-2); }
+.ov-wd { font-size: 13px; color: var(--ink-3); margin-left: -8px; }
+.ov-next-route { grid-area: route; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.ov-next-time { grid-area: time; font-size: 18px; font-weight: 700; white-space: nowrap; }
+.ov-next-time small, .ov-day-time small { font-size: 12.5px; font-weight: 600; color: var(--ink-3); margin-left: 2px; }
+.ov-next > svg { grid-area: go; }
+
+/* ---------- Wide-only sections (hidden on phones) ---------- */
+.ov-map, .ov-board, .ov-cal-wrap, .ov-snow, .ov-roads, .ov-todo { display: none; }
+.ov.is-before .ov-todo { display: grid; }
+.ov-todo, .ov-roads, .ov-snow, .ov-cal-wrap { gap: 10px; }
+
+/* Phone: title runs inline with its text to keep the list short. */
+.ov-todo-list li { padding: 8px 0; border-top: 1px solid var(--ice); font-size: 14px; line-height: 1.55; }
+.ov-todo-list li:first-child { border-top: 0; padding-top: 0; }
+.ov-todo-list strong { margin-right: 8px; font-size: 14px; }
+.ov-todo-list span { color: var(--ink-2); }
+
+.ov-links li + li { border-top: 1px solid var(--ice); }
+.ov-links a { display: flex; align-items: center; min-height: 42px; font-size: 14.5px; font-weight: 600; color: var(--cat-sight); text-decoration: none; }
+.ov-links a:hover { text-decoration: underline; }
+
+/* Key numbers */
+.ov-stats ul { display: flex; flex-wrap: wrap; row-gap: 10px; }
+.ov-stats li { display: flex; flex-direction: column; gap: 3px; padding: 0 20px; border-left: 1px solid var(--ice); }
+.ov-stats li:first-child { padding-left: 0; border-left: 0; }
+.ov-stat-v { display: inline-flex; align-items: center; font: 700 26px/1.1 var(--font-num); color: var(--ink); white-space: nowrap; }
+.ov-stat-v small { font-size: 15px; font-weight: 600; color: var(--ink-2); margin-left: 3px; }
+.ov-stat-v small:first-child { margin: 0 2px 0 0; }
+.ov-stat-v .ov-arrow { width: 20px; height: 11px; color: var(--ink-3); margin: 0 5px; }
+.ov-stat-l { font-size: 13px; color: var(--ink-2); }
+.ov-stats-note { margin-top: 8px; font-size: 12.5px; color: var(--ink-3); }
+.ov-stats-note a { color: var(--cat-sight); font-weight: 600; margin-left: 4px; }
+
+/* Map */
+.ov-map { gap: 8px; }
+.ov-map .ov-head { flex-wrap: wrap; row-gap: 0; }
+
+/* 8-day board */
+.ov-board { gap: 6px; padding: 14px 12px 12px; }
+.ov-board > .ov-head { padding: 0 6px; }
+.ov-board-list { display: grid; }
+.ov-board-list li { display: flex; min-width: 0; }
+.ov-day {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;
+  padding: 10px 12px 12px; border-radius: 10px; color: var(--ink); text-decoration: none;
+}
+.ov-day:hover { background: var(--frost); }
+.ov-day-n { display: flex; align-items: baseline; gap: 6px; }
+.ov-day-n b { font-size: 28px; line-height: 1; }
+.ov-day-n span { font-size: 13px; color: var(--ink-3); }
+.ov-day-n em { margin-left: auto; font-style: normal; font-size: 12px; font-weight: 700; }
+.ov-day-route { font-size: 14px; font-weight: 600; line-height: 1.4; word-break: keep-all; overflow-wrap: anywhere; }
+.ov-day-route .ov-arrow { width: 14px; height: 9px; margin: 0 4px; }
+.ov-day-time { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.ov-day-stay { margin-top: auto; padding-top: 4px; font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.ov-day-counts { display: flex; flex-wrap: wrap; gap: 5px; font-size: 12.5px; }
+.ov-day-counts > span { padding: 1px 7px; border-radius: 6px; background: var(--frost); color: var(--ink-2); white-space: nowrap; }
+.ov-day-counts b { font-weight: 700; }
+.ov-day-counts .is-stamp { background: var(--stamp-soft); color: var(--stamp); }
+.ov-day:hover .ov-day-counts > span:not(.is-stamp) { background: var(--paper); }
+/* Focus day borrows the road-sign plate so it reads as "you are here". */
+.ov-day.is-focus { background: var(--sign); color: #fff; box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 3.5px rgba(255, 255, 255, 0.85); }
+.ov-day.is-focus .ov-day-n span, .ov-day.is-focus .ov-day-stay, .ov-day.is-focus .ov-day-time small { color: rgba(255, 255, 255, 0.86); }
+.ov-day.is-focus .ov-day-counts > span { background: rgba(255, 255, 255, 0.16); color: #fff; }
+
+/* Event calendar (Gantt): thin line = event running; solid block = on our route that day; 休 = closed. */
+.ov-cal-scroll { overflow-x: auto; }
+.ov-cal { width: 100%; min-width: 560px; border-collapse: collapse; table-layout: fixed; }
+.ov-cal-c0 { width: 36%; }
+.ov-cal thead th { padding: 0 0 6px; text-align: center; font-size: 12px; font-weight: 500; line-height: 1.15; color: var(--ink-3); }
+.ov-cal thead th:first-child { text-align: left; }
+.ov-cal thead th b { display: block; font-size: 16px; font-weight: 700; color: var(--ink); }
+.ov-cal thead th.is-focus b { color: var(--cat-sight); }
+.ov-cal tbody tr { border-top: 1px solid var(--ice); }
+.ov-cal tbody th { padding: 7px 12px 7px 0; text-align: left; font-weight: 400; vertical-align: middle; }
+.ov-cal-name { display: inline; text-align: left; font-size: 14.5px; font-weight: 600; line-height: 1.35; color: var(--ink); }
+.ov-cal-name:hover { color: var(--cat-sight); text-decoration: underline; }
+.ov-cal-sub { display: flex; flex-wrap: wrap; gap: 0 10px; font-size: 12.5px; color: var(--ink-3); }
+.ov-dot { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--stamp); vertical-align: 2px; }
+.ov-cal td { position: relative; padding: 0; vertical-align: middle; }
+.ov-cal .is-focus { background: color-mix(in srgb, var(--sign) 8%, transparent); }
+.ov-cal td.fit::before, .ov-cal td.run::before, .ov-cal td.closed::before {
+  content: ""; position: absolute; left: 4px; right: 4px; top: 50%; height: 2px; margin-top: -1px;
+  background: color-mix(in srgb, var(--c, var(--ink-3)) 55%, transparent);
+}
+.ov-cal td.jl::before { left: 0; }
+.ov-cal td.jr::before { right: 0; }
+.ov-cal td i { position: relative; display: none; height: 18px; margin: 0 4px; border-radius: 4px; font-style: normal; }
+.ov-cal td.fit i { display: block; background: var(--c, var(--ink-2)); }
+.ov-cal td.closed i {
+  display: grid; place-items: center; background: var(--paper); color: var(--stamp);
+  box-shadow: inset 0 0 0 1.5px var(--stamp); font-size: 11px; font-weight: 700;
+}
+.ov-cal-out { padding: 0 8px; font-size: 13px; color: var(--ink-3); }
+.ov-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-3); }
+.ov-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.ov-legend i { display: inline-grid; place-items: center; width: 18px; height: 12px; border-radius: 3px; font-style: normal; }
+.ov-legend i.fit { background: var(--ink-2); }
+.ov-legend i.run { height: 2px; border-radius: 1px; background: var(--ink-3); }
+.ov-legend i.closed { height: 15px; color: var(--stamp); box-shadow: inset 0 0 0 1.5px var(--stamp); font-size: 10px; font-weight: 700; }
+
+/* Snow history snapshot */
+.ov-snow-list li {
+  display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr) 4.4rem 5.8rem; align-items: center; gap: 12px;
+  padding: 8px 8px; border-top: 1px solid var(--ice);
+}
+.ov-snow-list li.is-focus { background: color-mix(in srgb, var(--sign) 8%, transparent); border-radius: 8px; border-top-color: transparent; }
+.ov-snow-list li.is-focus + li { border-top-color: transparent; }
+.ov-snow-name { display: flex; flex-direction: column; min-width: 0; }
+.ov-snow-name strong { font-size: 14.5px; line-height: 1.35; }
+.ov-snow-name small { display: flex; flex-wrap: wrap; gap: 0 8px; font-size: 12.5px; color: var(--ink-3); }
+.ov-snow-bar { height: 10px; border-radius: 5px; background: var(--frost); overflow: hidden; }
+.ov-snow-bar i { display: block; height: 100%; border-radius: 5px; background: var(--sign); }
+.ov-snow-v { text-align: right; font-size: 19px; font-weight: 700; white-space: nowrap; }
+.ov-snow-v small { margin-left: 2px; font-size: 12.5px; font-weight: 600; color: var(--ink-3); }
+.ov-snow-c { text-align: right; font-size: 12.5px; color: var(--ink-3); white-space: nowrap; }
+.ov-snow-na { grid-column: 2 / -1; font-size: 13.5px; color: var(--ink-3); }
+
+/* ---------- Tablet: two-column hybrid ---------- */
+@media (min-width: 700px) {
+  .ov { gap: 18px; }
+  .ov-stats { display: block; }
+  .ov-map, .ov-board, .ov-cal-wrap, .ov-roads, .ov-todo { display: grid; }
+  .ov-today {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "hero hero" "stay next" "picks picks";
+    align-items: stretch;
+  }
+  .ov-hero { grid-area: hero; }
+  .ov-stay { grid-area: stay; }
+  .ov-next { grid-area: next; }
+  .ov-picks { grid-area: picks; }
+  .ov-today:not(:has(.ov-next)) .ov-stay { grid-column: 1 / -1; }
+  /* Half-width card: button goes under the name so the name keeps its width. */
+  .ov-stay { grid-template-columns: auto minmax(0, 1fr); align-items: start; row-gap: 10px; }
+  .ov-stay .btn { grid-column: 2; justify-self: start; min-height: 38px; }
+  .ov-next { align-content: center; }
+  .ov-main, .ov-more, .ov-col { display: grid; gap: 18px; align-content: start; }
+  .ov-map-box { height: 380px; }
+  .ov-board-list { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 6px; }
+  .ov-board-list li:not(:nth-child(4n + 1)) { border-left: 1px solid var(--ice); }
+  .ov-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ov-todo-list li { display: grid; grid-template-columns: 6.2em minmax(0, 1fr); gap: 12px; }
+  .ov-todo-list strong { margin: 0; }
+}
+
+/* ---------- Desktop dashboard ---------- */
+@media (min-width: 1100px) {
+  .ov { gap: 20px; }
+  .ov-top { flex-wrap: nowrap; align-items: center; padding: 4px 0 2px; }
+  .ov-status { flex-direction: column; align-items: flex-start; gap: 0; flex: none; }
+  .ov-status h1 { font-size: 22px; }
+  .ov-status h1 b { font-size: 40px; }
+  .ov-stats { padding-left: 28px; border-left: 1px solid var(--ice); }
+  .ov-main { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: stretch; }
+  .ov-map { display: flex; flex-direction: column; }
+  .ov-map-box { flex: 1; height: auto; min-height: 420px; }
+  .ov-rows { grid-template-columns: 1fr; }
+  .ov-board-list { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .ov-board-list li:not(:nth-child(4n + 1)) { border-left: 0; }
+  .ov-board-list li + li { border-left: 1px solid var(--ice); }
+  .ov-more { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+  .ov-col { gap: 20px; }
+  .ov-snow { display: grid; }
+}

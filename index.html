@@ -1,9 +1,91 @@
-<!doctype html><html lang="zh-Hant-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>北海道・雪與湯｜Moving Inn＋二世古滑雪</title><meta name="description" content="按既定酒店安排：札幌、美瑛Spoon Valley、富良野La Vista、Moving Inn、SISUMO昆布，再返札幌。附25項活動、1–2小時自駕候選及互動地圖。"><link rel="stylesheet" href="./assets/style.css?v=snow1"><link rel="stylesheet" href="./assets/itinerary.css?v=1"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""><script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script><script defer src="./assets/itinerary-data.js?v=1"></script><script defer src="./assets/itinerary.js?v=1"></script></head><body>
-<header><div class="wrap"><div class="masthead"><div class="brandline"><span class="brand-mark" aria-hidden="true">雪</span><div><div class="eyebrow">HOKKAIDO · 13–20 DEC 2026</div><h1>北海道・雪與湯</h1></div></div><div class="trip-meta"><strong>Moving Inn＋二世古滑雪</strong>六人同行 → 夫婦18日返港 → 四人滑雪</div></div><nav class="main-tabs" role="tablist" aria-label="旅行規劃"><button id="t-plan" data-tab="plan" role="tab" aria-controls="p-plan" aria-selected="true">每日行程</button><button id="t-activities" data-tab="activities" role="tab" aria-controls="p-activities" aria-selected="false" tabindex="-1">景點／活動與地圖</button><button id="t-stays" data-tab="stays" role="tab" aria-controls="p-stays" aria-selected="false" tabindex="-1">住宿與預算</button></nav><a href="./climate.html" class="climate-nav">近年天氣／積雪 ↗</a></div></header>
-<main class="wrap">
-<section class="trip-panel" id="p-plan" role="tabpanel" aria-labelledby="t-plan"><div class="trip-intro"><div><span class="badge">住宿路線・2026.10.19更新</span><h2>雪景、特色住宿，再到二世古滑雪。</h2><p>札幌 → 美瑛 Spoon Valley → 富良野 La Vista → <strong>Moving Inn</strong> → SISUMO 昆布 → 札幌。景點按每日基地選，Moving Inn 嗰晚留時間享受住宿。</p></div><div class="trip-focus"><span class="eyebrow">16 DEC · MOVING INN</span><strong>早出發，下午入住。</strong><span>先排已訂方案嘅桑拿、浴池、晚餐；附近燈飾／溫泉係額外選項。</span><button class="btn soft" data-base-jump="taiki">睇Moving Inn及附近活動 →</button></div></div><div class="route-two"><div class="day-list" id="days-fixed"></div><aside class="card trip-side"><h3>每日揀一組，唔使全部去。</h3><ul><li><strong>美瑛：</strong>丘陵短停＋木屋；或者翌日選白金瀑布、青池。</li><li><strong>富良野：</strong>芝士工房、精靈露台近酒店，容易按時間揀。</li><li><strong>Moving Inn：</strong>住宿係主項，河畔桑拿要先確認16日下午場次。</li><li><strong>17日：</strong>千歲附近分隊後四人續去昆布；預留長途轉場，唔加遠景點。</li><li><strong>18–19日：</strong>二世古滑雪；近民宿溫泉、甜品較容易配合。</li></ul><p class="note">景點卡嘅車程係由所列基地出發嘅<strong>單程冬季規劃估算</strong>。1–2小時候選連來回及遊覽往往要半日，唔代表順路、亦唔會自動加入當日行程。</p><a href="./climate.html" class="btn soft" style="margin-top:14px">比較近年雪景資料 ↗</a></aside></div></section>
-<section class="trip-panel" id="p-activities" role="tabpanel" aria-labelledby="t-activities" hidden><div class="region-tabs" id="activity-bases" role="tablist" aria-label="住宿基地"></div><div class="region-heading"><div><div class="eyebrow" id="base-dates"></div><h2 id="base-title"></h2><p id="base-note"></p></div><span class="badge" id="base-count"></span></div><div class="activity-layout" id="base-results" role="tabpanel" aria-labelledby="base-taiki"><div class="map-column"><div class="map-controls"><label><input id="full-route" type="checkbox">顯示全程住宿路線</label><button id="fit-activities" class="chip">顯示目前範圍</button></div><div class="map-shell"><div id="activity-map" aria-label="既定住宿及附近活動互動地圖"></div><p id="map-unavailable" class="map-placeholder" hidden>互動地圖未能載入；可用卡片嘅Google Maps連結。</p></div><div class="map-legend"><span><i class="dot stay"></i>住宿／基地</span><span><i class="dot ski"></i>主推活動</span><span><i class="dot spot"></i>額外候選</span></div><p class="map-status" id="activity-map-status" role="status"></p><div class="note small" style="margin-top:13px">車程按位置同冬季餘量估算，唔係指定日期導航；地圖虛線只表示住宿次序。民宿、雪場區域及部分官方地圖中心會標明約略位置。</div></div><aside class="activity-sidebar"><div class="activity-filters"><label>單程自駕範圍<select id="drive-filter"><option value="120">全部・兩小時內</option><option value="30">30分鐘內</option><option value="60">一小時內</option><option value="far">約一至兩小時</option></select></label><label>安排方式<select id="kind-filter"><option value="all">全部</option><option value="main">主推</option><option value="extra">額外候選</option><option value="check">要先確認</option></select></label></div><div class="item-list" id="activity-cards"></div><div class="pagination"><span id="activity-page" aria-live="polite"></span><div class="row"><button class="chip" id="activity-prev" aria-label="上一頁">←</button><button class="chip" id="activity-next" aria-label="下一頁">→</button></div></div></aside></div><details class="card" style="margin-top:20px"><summary>今次唔當成保證有得玩嘅冬季項目</summary><div id="date-limits" class="date-limits"></div></details></section>
-<section class="trip-panel" id="p-stays" role="tabpanel" aria-labelledby="t-stays" hidden><div class="section-title"><div><div class="eyebrow">YOUR HOTELS · ONE ROUTE</div><h2>住宿照原表，預算分清六人同四人。</h2></div><p>酒店名同價格沿用你提供嘅表格。夫婦17日另住及交通補回計算；住宿房型、套餐及活動費按訂單再確認。</p></div><div class="stay-budget-grid"><div><div class="card"><label for="fixed-hotel" class="small muted">睇住宿資料</label><select id="fixed-hotel" class="wide-select"></select><div id="fixed-hotel-info"></div></div><div class="card" style="margin-top:17px"><h3>原住宿費・組內合計 HK$</h3><div class="table-scroll"><table><thead><tr><th>晚數</th><th>住宿</th><th>合計</th></tr></thead><tbody><tr><td>13日・六人</td><td>薄野Granbell</td><td>2,801.43</td></tr><tr><td>14日・六人</td><td>Spoon Valley</td><td>8,874.00</td></tr><tr><td>15日・六人</td><td>La Vista富良野</td><td>4,043.34</td></tr><tr><td>16日・六人</td><td>Moving Inn</td><td>11,061.29</td></tr><tr><td>17、18日・四人</td><td>SISUMO昆布・兩晚</td><td>6,273.00</td></tr><tr><td>19日・四人</td><td>薄野Granbell</td><td>3,062.02</td></tr></tbody></table></div><p class="small muted" style="margin-top:10px">沿用¥1＝HK$0.051。相中Moving Inn為¥216,888六人合計。各晚套餐、餐飲及附加費未必相同，唔假設全部已包。</p></div></div><div><div class="card"><h3>補回分隊與活動預算</h3><div class="fields"><div class="field"><label for="couple-hotel">夫婦17日住宿・兩人 HK$</label><input id="couple-hotel" type="number" min="0" value="1000" step="100"></div><div class="field"><label for="couple-transfer">夫婦分隊交通・兩人 HK$</label><input id="couple-transfer" type="number" min="0" value="0" step="100"></div><div class="field"><label for="ski-extras">滑雪／裝備／課堂・每位男士 HK$</label><input id="ski-extras" type="number" min="0" value="0" step="100"></div><div class="field"><label for="other-extras">其他活動・全六人總額 HK$</label><input id="other-extras" type="number" min="0" value="0" step="100"></div></div><label class="cost-check"><input id="spoon-two" type="checkbox">Spoon按夫婦一棟＋四人一棟分攤</label><label class="cost-check"><input id="river-six" type="checkbox">另預留六人河畔桑拿 ¥10,000／人</label><p class="note" style="margin-top:12px">夫婦17日住宿HK$1,000係預留，唔係新酒店報價。活動0代表未加入；河畔桑拿只按官網參考價預留，場次及房價是否已包需確認，避免重複計。</p></div><aside class="budget-result" style="margin-top:17px" id="fixed-budget" aria-live="polite"></aside></div></div><p class="small muted" style="margin-top:16px">SISUMO原表只計四人，所以本版按17日經千歲附近先分隊。若夫婦17日仍想同住，需另查六人報價及18日接駁；唔自動把四人價除六。</p></section>
-<noscript><div class="card">固定路線：13札幌、14美瑛Spoon Valley、15富良野La Vista、16 Moving Inn、17–18 SISUMO昆布、19札幌、20返港。夫婦18返港，四人18–19滑雪。互動分頁及地圖需啟用JavaScript。</div></noscript>
-<details class="card" style="margin-top:26px"><summary>資料來源與車程說明</summary><p class="small muted" style="margin-top:12px">活動資料於2026.10.19查核。各卡有官方連結、日期及限制；時間係按基地位置與冬季餘量估算，未查指定時段道路狀況。住宿原價係你提供嘅資料，未代訂酒店或活動；亦冇上載原相片。實際雪況、入場時間及臨時休息以官方當日資料為準。</p><div id="fixed-sources" class="fixed-sources"></div></details>
-</main><footer class="footer"><div class="wrap row spread"><span>13–17六人雪景旅程・18–19四人二世古滑雪</span><a href="./climate.html">近年天氣／積雪 ↗</a></div></footer><dialog id="activity-detail"><div class="dialog-top"><div><div class="eyebrow" id="activity-detail-label"></div><h2 id="activity-detail-title"></h2></div><button id="activity-close" class="dialog-close" aria-label="關閉詳情">×</button></div><div class="dialog-body" id="activity-detail-body"></div></dialog></body></html>
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1b5aa6">
+<title>北海道・雪與湯｜2026 D3 Trip</title>
+<meta name="description" content="13–20/12/2026 北海道自駕：札幌、美瑛 Spoon Valley、富良野、Moving Inn、二世古昆布。每日路線、住宿附近景點、節慶、溫泉、美食同補給點，附地圖、想去清單及預算。">
+<script>
+  try { var t = localStorage.getItem('d3jp26.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="./assets/theme.css?v=4">
+<link rel="stylesheet" href="./assets/app.css?v=8">
+<link rel="stylesheet" href="./assets/overview.css?v=4">
+<script async id="leaflet-js" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" onload="window.__leaflet='ok'" onerror="window.__leaflet='failed'"></script>
+<script defer src="./assets/itinerary-data.js?v=6"></script>
+<script type="module" src="./assets/js/main.js?v=6"></script>
+</head>
+<body>
+<a class="skip-link" href="#app">跳到內容</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#/today"><strong>北海道・雪與湯</strong><span>13–20/12/2026</span></a>
+    <nav class="topnav" aria-label="主要分頁">
+      <a href="#/today" data-nav="today">總覽</a>
+      <a href="#/days" data-nav="days">行程</a>
+      <a href="#/explore" data-nav="explore">景點</a>
+      <a href="#/stars" data-nav="stars">想去清單</a>
+      <a href="#/stays" data-nav="stays">住宿及預算</a>
+    </nav>
+    <div class="topbar-tools">
+      <a class="text-link" href="./climate.html">近年積雪</a>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切換深淺色">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="app" class="app" tabindex="-1">
+  <section id="view-today" class="view" data-view="today" aria-label="總覽" hidden></section>
+  <section id="view-days" class="view" data-view="days" aria-label="每日行程" hidden></section>
+  <section id="view-explore" class="view" data-view="explore" aria-label="景點及活動" hidden></section>
+  <section id="view-stars" class="view" data-view="stars" aria-label="想去清單" hidden></section>
+  <section id="view-stays" class="view" data-view="stays" aria-label="住宿及預算" hidden></section>
+  <noscript>
+    <div class="panel">固定路線：13札幌 Granbell、14美瑛 Spoon Valley、15富良野 La Vista、16 Moving Inn（大樹町）、17–18 SISUMO昆布、19札幌 Granbell、20返港。夫婦18日返港，四人18–19日二世古滑雪。互動地圖、篩選同想去清單要開啟JavaScript。</div>
+  </noscript>
+  <footer class="site-foot">
+    <span>資料查核：<span id="data-checked">2026-10-19</span>。冇代訂任何住宿或活動；營業時間及雪況以官方當日公布為準。</span>
+    <a href="./climate.html">近年天氣／積雪</a>
+    <a href="https://github.com/remtoec/2026D3Trip" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+</main>
+
+<nav class="tabbar" aria-label="主要分頁">
+  <a href="#/today" data-nav="today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5 12 6l2.5-1.5M9.5 19.5 12 18l2.5 1.5"/></svg>今日
+  </a>
+  <a href="#/days" data-nav="days">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>行程
+  </a>
+  <a href="#/explore" data-nav="explore">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.8" r="2.4"/></svg>景點
+  </a>
+  <a href="#/stars" data-nav="stars">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5"/></svg>想去
+    <span class="badge-count" id="stars-count" hidden></span>
+  </a>
+  <a href="#/stays" data-nav="stays">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20H4z"/><path d="M10 20v-5h4v5"/></svg>住宿
+  </a>
+</nav>
+
+<dialog id="sheet" class="sheet" aria-labelledby="sheet-title">
+  <div class="sheet-grip" aria-hidden="true"></div>
+  <div class="sheet-head">
+    <h2 id="sheet-title"></h2>
+    <button class="icon-btn close" id="sheet-close" type="button" aria-label="關閉">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
